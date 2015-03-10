@@ -1,0 +1,27 @@
+{
+  "name": "laravel-elixir-cachebust",
+  "version": "1.0.0",
+  "description": "A module for laravel-elixir that is meant to be used instead of .version()",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gercoli/laravel-elixir-cachebust.git"
+  },
+  "keywords": [
+    "laravel",
+    "elixir",
+    "cachebust"
+  ],
+  "author": "Garry Ercoli <Garry@GErcoli.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gercoli/laravel-elixir-cachebust/issues"
+  },
+  "homepage": "https://github.com/Gercoli/laravel-elixir-cachebust",
+  "dependencies": {
+    "gulp-shell": "^0.3.0"
+  }
+}
