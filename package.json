@@ -22,10 +22,5 @@
   },
   "homepage": "https://github.com/Gercoli/laravel-elixir-cachebust",
   "dependencies": {
-    "del": "^1.1.1",
-    "gulp-shell": "^0.3.0",
-    "gulp-util": "^3.0.4",
-    "through2": "^0.6.3",
-    "vinyl-paths": "^1.0.0"
   }
 }
