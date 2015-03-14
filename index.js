@@ -7,6 +7,7 @@ var path = require('path');
 var through = require('through2');
 var gutil = require('gulp-util');
 var del = require('del');
+var objectAssign = require('object-assign');
 
 // Variable to remember file mtime and hash:
 var file_mtime = {};
@@ -46,4 +47,22 @@ function generateHash(str, length)
     return hash || uuid(length);
 }
 
-var
+var hashFile = function(options) {
+    options = objectAssign({hash:'md4'},options || {});
+
+    return through.obj(function(file,encoding,callback) {
+        if(!file || file.isNull()) {
+            callback(null,file);
+            return;
+        }
+
+        if(file.isStream()) {
+            callback(
+                new gutil.PluginError('laravel-elixir-cachebust', 'Streaming not supported')
+            );
+            return;
+        }
+
+
+    });
+}
