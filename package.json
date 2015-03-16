@@ -1,6 +1,6 @@
 {
   "name": "laravel-elixir-cachebust",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A module for laravel-elixir that is meant to be used instead of .version()",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,8 @@
     "url": "https://github.com/Gercoli/laravel-elixir-cachebust.git"
   },
   "keywords": [
+    "laravel5",
+    "laravel-elixir",
     "laravel",
     "elixir",
     "cachebust"
