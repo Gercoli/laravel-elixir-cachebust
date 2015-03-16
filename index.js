@@ -112,7 +112,7 @@ var cacheBust = function(options) {
             file_mtime[file.path] = {
                 mtime: thisFile.current_mtime,
                 hash: strHash
-            }
+            };
 
 
         }
