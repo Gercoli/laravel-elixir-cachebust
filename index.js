@@ -47,8 +47,24 @@ function generateHash(str, length)
     return hash || uuid(length);
 }
 
-var hashFile = function(options) {
-    options = objectAssign({method:'hash',length: 8},options || {});
+/**
+ * Cycles through each file and if the file has been modified,
+ * a new cache busting string is generated and output to a json file.
+ * @param options
+ * @returns {*}
+ */
+var cacheBust = function(options) {
+    options = objectAssign(
+        {   // default settings
+            method:'hash',
+            length: 8,
+            baseDir: "public",
+            file: "cachbuster.json"
+        },
+        options || {});
+
+    var output = {};        // The JSON object that will be saved to disk.
+    var firstFile = null;   // Used to create the JSON file.
 
     return through.obj(function(file,encoding,callback) {
         // If we are not passed a valid object, abort.
@@ -97,9 +113,56 @@ var hashFile = function(options) {
                 mtime: thisFile.current_mtime,
                 hash: strHash
             }
+
+
         }
 
-        file.hash = file_mtime[file.path]['hash'];
-        callback(null,file);
+        output["/" + file.relative] = file_mtime[file.path]['hash'];
+
+        firstFile = firstFile || file;
+
+        callback();
+    }, function(callback) {
+        if(firstFile) {
+            this.push(
+                new gutil.File({
+                    cwd: firstFile.cwd,
+                    base: firstFile.base,
+                    path: path.join(firstFile.base, options.file),
+                    contents: new Buffer(JSON.stringify(output, null, "\t"))
+                })
+            );
+        }
+
+        callback();
     });
-}
+};
+
+/**
+ * Hook into elixir's API and register the "cachebust" method.
+ */
+elixir.extend('cachebust',function(src, options){
+
+    // overwrite default values in the options.
+    options = objectAssign(
+        {   // default settings
+            method:'hash',
+            length: 8,
+            baseDir: "public/",
+            file: "cachbuster.json"
+        },
+        options || {});
+
+
+    src = utilities.prefixDirToFiles(options.baseDir, src);
+
+    gulp.task("cache-busting", function() {
+        return gulp.src( src, {base: './public'} )
+            .pipe(cacheBust(options))
+            .pipe(gulp.dest(options.baseDir));
+    });
+
+    this.registerWatcher("cache-busting",src);
+
+    return this.queueTask("cache-busting");
+});
