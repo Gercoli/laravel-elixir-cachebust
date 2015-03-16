@@ -49,7 +49,8 @@ elixir(function(mix) {
         {
             method: "uuid",
             length: 10,
-            baseDir: "public"   // cachebust will look in this dir for the assets above.
+            baseDir: "public"   // This is where our assets should be located,
+                                // and is where we will generate our json file.
         }
     );
 });
