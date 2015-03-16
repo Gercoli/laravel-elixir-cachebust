@@ -2,7 +2,10 @@
 A simple [laravel-elixir](https://github.com/laravel/elixir) extension that works much like elixir's built in ```.version()``` method, except instead of renaming asset file names (and creating duplicates in /public/build/ and polluting your git repo), this module will append the cache-busting string onto the end of a file in the form of query string (i.e. /assets/css/styles?4c6649eb) inside of the the HTML document via use of a custom function.
 
 ## Installation ##
-Coming soon...
+While in your laravel root directory, execute the following code:
+```
+npm install laravel-elixir-cachebust --save
+```
 
 ## Usage ##
 Your gulpfile.js needs two modifications in order to work properly.
