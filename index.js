@@ -59,7 +59,7 @@ var cacheBust = function(options) {
             method:'hash',
             length: 8,
             baseDir: "public",
-            file: "cachbuster.json"
+            file: "cachebuster.json"
         },
         options || {});
 
@@ -117,7 +117,7 @@ var cacheBust = function(options) {
 
         }
 
-        output["/" + file.relative] = file_mtime[file.path]['hash'];
+        output[file.relative] = file_mtime[file.path]['hash'];
 
         firstFile = firstFile || file;
 
@@ -149,7 +149,7 @@ elixir.extend('cachebust',function(src, options){
             method:'hash',
             length: 8,
             baseDir: "public/",
-            file: "cachbuster.json"
+            file: "cachebuster.json"
         },
         options || {});
 
