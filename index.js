@@ -117,7 +117,7 @@ var cacheBust = function(options) {
 
         }
 
-        output[file.relative] = file_mtime[file.path]['hash'];
+        output[file.relative.replace(/\\/g, '/')] = file_mtime[file.path]['hash'];
 
         firstFile = firstFile || file;
 
