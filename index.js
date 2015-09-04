@@ -1,6 +1,5 @@
 // Requirements:
 var elixir = require('laravel-elixir');
-var utilities = require('laravel-elixir/ingredients/commands/Utilities');
 var gulp = require('gulp');
 var crypto = require('crypto');
 var path = require('path');
@@ -8,6 +7,9 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var del = require('del');
 var objectAssign = require('object-assign');
+
+
+var Task = elixir.Task;
 
 // Variable to remember file mtime and hash:
 var file_mtime = {};
@@ -45,6 +47,16 @@ function generateHash(str, length)
         }
     }
     return hash || uuid(length);
+}
+
+function prefixDirToFiles(dir, files) {
+	if ( ! Array.isArray(files)) files = [files];
+
+	return files.map(function(file) {
+		file = file.replace(new RegExp('^' + dir), '');
+
+		return [dir, file].join('/').replace('//', '/');
+	}); 
 }
 
 /**
@@ -154,15 +166,13 @@ elixir.extend('cachebust',function(src, options){
         options || {});
 
 
-    src = utilities.prefixDirToFiles(options.baseDir, src);
+    src = prefixDirToFiles(options.baseDir, src);
 
-    gulp.task("cache-busting", function() {
+    new Task("cachebust", function() {
         return gulp.src( src, {base: './public'} )
             .pipe(cacheBust(options))
             .pipe(gulp.dest(options.baseDir));
-    });
+    }).watch(src);
 
-    this.registerWatcher("cache-busting",src);
-
-    return this.queueTask("cache-busting");
 });
+
