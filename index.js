@@ -1,6 +1,5 @@
 // Requirements:
 var elixir = require('laravel-elixir');
-var utilities = require('laravel-elixir/ingredients/commands/Utilities');
 var gulp = require('gulp');
 var crypto = require('crypto');
 var path = require('path');
@@ -8,6 +7,9 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var del = require('del');
 var objectAssign = require('object-assign');
+
+
+var Task = elixir.Task;
 
 // Variable to remember file mtime and hash:
 var file_mtime = {};
@@ -47,6 +49,16 @@ function generateHash(str, length)
     return hash || uuid(length);
 }
 
+function prefixDirToFiles(dir, files) {
+	if ( ! Array.isArray(files)) files = [files];
+
+	return files.map(function(file) {
+		file = file.replace(new RegExp('^' + dir), '');
+
+		return [dir, file].join('/').replace('//', '/');
+	}); 
+}
+
 /**
  * Cycles through each file and if the file has been modified,
  * a new cache busting string is generated and output to a json file.
@@ -59,7 +71,7 @@ var cacheBust = function(options) {
             method:'hash',
             length: 8,
             baseDir: "public",
-            file: "cachbuster.json"
+            file: "cachebuster.json"
         },
         options || {});
 
@@ -117,7 +129,7 @@ var cacheBust = function(options) {
 
         }
 
-        output["/" + file.relative] = file_mtime[file.path]['hash'];
+        output[file.relative.replace(/\\/g, '/')] = file_mtime[file.path]['hash'];
 
         firstFile = firstFile || file;
 
@@ -149,20 +161,18 @@ elixir.extend('cachebust',function(src, options){
             method:'hash',
             length: 8,
             baseDir: "public/",
-            file: "cachbuster.json"
+            file: "cachebuster.json"
         },
         options || {});
 
 
-    src = utilities.prefixDirToFiles(options.baseDir, src);
+    src = prefixDirToFiles(options.baseDir, src);
 
-    gulp.task("cache-busting", function() {
+    new Task("cachebust", function() {
         return gulp.src( src, {base: './public'} )
             .pipe(cacheBust(options))
             .pipe(gulp.dest(options.baseDir));
-    });
+    }).watch(src);
 
-    this.registerWatcher("cache-busting",src);
-
-    return this.queueTask("cache-busting");
 });
+

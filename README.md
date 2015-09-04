@@ -33,7 +33,7 @@ The second parameter of .cachebust() allows you to set these options:
   - "mtime" - The time that the file was last modified, according to the filesystem.
 - **length**: The *maximum* length that a cache-busting string should be. (default is 8)
 - **baseDir**: The path (relative to laravel's root dir) where the generated json file should be. (default is "public")
-- **file**: The filename of the json file. (default is "cachbuster.json")
+- **file**: The filename of the json file. (default is "cachebuster.json")
 
 ### Example of gulpfile.js - With options ###
 ```Javascript
@@ -54,4 +54,38 @@ elixir(function(mix) {
         }
     );
 });
+```
+
+### Using the versioned assets
+You may define a modified version of the `elixir()` helper function to make use of the versioned assets in your views:
+```php
+if ( ! function_exists('elixir_cachebust'))
+{
+	/**
+	* Get the path to a versioned Elixir Cachebust file.
+	*
+	* @param  string  $file
+	* @return string
+	*/
+	function elixir_cachebust($file)
+	{
+		static $manifest = null;
+
+		if (is_null($manifest))
+		{
+			$manifest = json_decode(file_get_contents(public_path().'/cachebuster.json'), true);
+		}
+
+		if (isset($manifest[$file]))
+		{
+			return asset($file) . '?' . $manifest[$file];
+		}
+
+		throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
+	}
+}
+```
+
+```html
+	<link href="{{ elixir_cachebust('css/app.css') }}" rel="stylesheet">
 ```
